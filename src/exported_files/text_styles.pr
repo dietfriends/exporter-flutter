@@ -23,9 +23,8 @@ class AppTextStyles {
     {[ case "Strikethrough" ]}
       {[ set decoration = "lineThrough" /]}
   {[/]}
-  {[ const lineHeight = typographyToken.value.lineHeight.measure /]}
+  {[ const lineHeight = typographyToken.value.lineHeight /]}
   {[ const fontSize = typographyToken.value.fontSize.measure /]}
-  {[ let height = lineHeight.dividedBy(fontSize) /]}
   {[ let letterSpacing = typographyToken.value.letterSpacing.measure /]}
   {[ if typographyToken.value.letterSpacing.unit.equals("Percent") ]}
     {[ set letterSpacing = (fontSize / 100 * letterSpacing) /]}
@@ -41,7 +40,9 @@ class AppTextStyles {
     fontSize: {[ inject "export_measure_value" context typographyToken.value.fontSize /]},
     decoration: TextDecoration.{{ decoration }},
     letterSpacing: {{ letterSpacing.toString() }},
-    height: {{ height.toString() }},
+    {[ if lineHeight ]}
+      height: {{ (lineHeight.measure / fontSize) }},
+    {[/]}
   );
 
   {[/]}
