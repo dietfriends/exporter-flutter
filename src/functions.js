@@ -75,6 +75,35 @@ function objToEntries(obj) {
     return Object.entries(obj)
 }
 
+function runBooleanOperation(type, conditions) {
+    if (type === "and") {
+        for (var condition of conditions) {
+            if (!condition) {
+                return false;
+            }
+        }
+        return true;
+    } else if (type === "or") {
+        for (var condition of conditions) {
+            if (condition) {
+                return true;
+            }
+        }
+        return false;
+    } else {
+        throw('not supported');
+    }
+}
+
+function findInObjects(objs, targetKey, targetValue) {
+    for (var obj of objs) {
+        if (obj[targetKey] === targetValue) {
+            return obj;
+        }
+    }
+    throw "not found";
+}
+
 Pulsar.registerFunction("createDocumentationComment", createDocumentationComment)
 Pulsar.registerFunction("createFullTokenGroupPath", createFullTokenGroupPath)
 Pulsar.registerFunction("arrayConcat", arrayConcat)
@@ -83,3 +112,5 @@ Pulsar.registerFunction("convertHexColor", convertHexColor)
 Pulsar.registerFunction("objToEntries", objToEntries)
 Pulsar.registerFunction("createEmptyObj", createEmptyObj)
 Pulsar.registerFunction("addEntryToObj", addEntryToObj)
+Pulsar.registerFunction("runBooleanOperation", runBooleanOperation)
+Pulsar.registerFunction("findInObjects", findInObjects)
