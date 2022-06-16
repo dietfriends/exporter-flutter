@@ -100,3 +100,15 @@ class {{ semanticColor.name.camelcased(true) }}Colors implements SemanticColors 
 {[/]}
 }
 {[/]}
+
+class SemanticColor extends ColorSwatch<String> {
+  /// Primary is Basic
+  const SemanticColor(int primary, Map<String, Color> swatch)
+      : super(primary, swatch);
+
+  Color get basic => this['basic']!;
+
+  Color get light => this['light']!;
+
+  Color? get text => this['text'];
+}
