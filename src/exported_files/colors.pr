@@ -42,7 +42,7 @@ class BrandColors {
   {[ for brandColor in brandColors ]}
   {[ const colors = ds.tokensByGroupId(brandColor.id) /]}
   {[ const primaryColor = findInObjects(colors, "name", "50") /]}
-  const BalanceColor {{ brandColor.name.camelcased(false) }} = BalanceColor(
+  final BalanceColor {{ brandColor.name.camelcased(false) }} = const BalanceColor(
     {{ convertHexColor(primaryColor.value) }}, {* 6th of entries is primary color *}
     <int, Color>{
       {[ for color in colors ]}
@@ -61,30 +61,30 @@ class BrandColors {
 /// 변경시 각별히 유의해야 합니다.
 /// https://spectrum.adobe.com/page/color/#Semantic-colors
 ///
-class SemanticColors implements AppColors {
+class SemanticColors {
   const SemanticColors._();
 
   {[ for semanticColor in semanticColors ]}
-  const {{ semanticColor.name.camelcased(true) }}Colors {{ semanticColor.name.camelcased(false) }} = {{ semanticColor.name.camelcased(true) }}Colors._();
+  final {{ semanticColor.name.camelcased(true) }}Colors {{ semanticColor.name.camelcased(false) }} = const {{ semanticColor.name.camelcased(true) }}Colors._();
   {[/]}
 }
 
 {[ for semanticColor in semanticColors ]}
-class {{ semanticColor.name.camelcased(true) }}Colors implements SemanticColors {
+class {{ semanticColor.name.camelcased(true) }}Colors {
   const {{ semanticColor.name.camelcased(true) }}Colors._();
 
 {* check is category *}
 {[ const currentColors = ds.tokensByGroupId(semanticColor.id) /]}
 {[ if (currentColors.count() > 0) ]}
 {[ for currentColor in currentColors ]}
-  const Color {{ currentColor.name.camelcased(false) }} = Color({{ convertHexColor(currentColor.value) }});
+  final Color {{ currentColor.name.camelcased(false) }} = const Color({{ convertHexColor(currentColor.value) }});
 {[/]}
 {[ else ]}
 {[ if (semanticColor.subgroups.count() > 0) ]}
 {[ for subgroup in semanticColor.subgroups ]}
   {[ const colors = ds.tokensByGroupId(subgroup.id) /]}
   {[ const primaryColor = findInObjects(colors, "name", "Basic") /]}
-  const SemanticColor {{ subgroup.name.camelcased(false) }} = SemanticColor(
+  final SemanticColor {{ subgroup.name.camelcased(false) }} = const SemanticColor(
     {{ convertHexColor(primaryColor.value) }},
     <String, Color>{
       {[ for color in colors ]}
