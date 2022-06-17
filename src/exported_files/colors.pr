@@ -20,15 +20,12 @@ class AppColors {
 {[ for mainGroup in mainGroups ]}
   {[ const groupName = mainGroup.name.camelcased(false) /]}
   {[ if (groupName === "brand") ]} {* Brand Colors *}
-  {[ for sub in mainGroup.subgroups ]}
-  static const BalanceColor {{ sub.name.camelcased(false) }} = BrandColors.{{ sub.name.camelcased(false) }};
-  {[/]}
   {[ set brandColors = mainGroup.subgroups /]}
+  static const {{ mainGroup.name.camelcased(true) }}Colors {{ groupName }} = {{ mainGroup.name.camelcased(true) }}Colors._();
   {[ elseif (groupName === "semantic") ]} {* Semantic Colors *}
-  {[ for sub in mainGroup.subgroups ]}
-  static const {{ sub.name.camelcased(true) }}Colors {{ sub.name.camelcased(false) }} = SemanticColors.{{ sub.name.camelcased(false) }};
-  {[/]}
   {[ set semanticColors = mainGroup.subgroups /]}
+  static const {{ mainGroup.name.camelcased(true) }}Colors {{ groupName }} = {{ mainGroup.name.camelcased(true) }}Colors._();
+  {[/]}
   {[/]}
 {[/]}
 }
@@ -45,7 +42,7 @@ class BrandColors {
   {[ for brandColor in brandColors ]}
   {[ const colors = ds.tokensByGroupId(brandColor.id) /]}
   {[ const primaryColor = findInObjects(colors, "name", "50") /]}
-  static const BalanceColor {{ brandColor.name.lowercased() }} = BalanceColor(
+  const BalanceColor {{ brandColor.name.camelcased(false) }} = BalanceColor(
     {{ convertHexColor(primaryColor.value) }}, {* 6th of entries is primary color *}
     <int, Color>{
       {[ for color in colors ]}
@@ -68,7 +65,7 @@ class SemanticColors implements AppColors {
   const SemanticColors._();
 
   {[ for semanticColor in semanticColors ]}
-  static const {{ semanticColor.name.camelcased(true) }}Colors {{ semanticColor.name.lowercased() }} = {{ semanticColor.name.camelcased(true) }}Colors._();
+  const {{ semanticColor.name.camelcased(true) }}Colors {{ semanticColor.name.camelcased(false) }} = {{ semanticColor.name.camelcased(true) }}Colors._();
   {[/]}
 }
 
@@ -80,14 +77,14 @@ class {{ semanticColor.name.camelcased(true) }}Colors implements SemanticColors 
 {[ const currentColors = ds.tokensByGroupId(semanticColor.id) /]}
 {[ if (currentColors.count() > 0) ]}
 {[ for currentColor in currentColors ]}
-  static const Color {{ currentColor.name.camelcased(false) }} = Color({{ convertHexColor(currentColor.value) }});
+  const Color {{ currentColor.name.camelcased(false) }} = Color({{ convertHexColor(currentColor.value) }});
 {[/]}
 {[ else ]}
 {[ if (semanticColor.subgroups.count() > 0) ]}
 {[ for subgroup in semanticColor.subgroups ]}
   {[ const colors = ds.tokensByGroupId(subgroup.id) /]}
   {[ const primaryColor = findInObjects(colors, "name", "Basic") /]}
-  static const SemanticColor {{ subgroup.name.lowercased() }} = SemanticColor(
+  const SemanticColor {{ subgroup.name.camelcased(false) }} = SemanticColor(
     {{ convertHexColor(primaryColor.value) }},
     <String, Color>{
       {[ for color in colors ]}
