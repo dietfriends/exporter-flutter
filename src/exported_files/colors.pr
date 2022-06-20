@@ -15,6 +15,7 @@ class AppColors {
 {[ let brand = ds.currentBrand() /]}
 {[ let brandColors = [] /]}
 {[ let semanticColors = [] /]}
+{[ let chatThemeColors = [] /]}
 {[ const colorTokensTree = ds.tokenGroupTreeByType("Color", brand.id) /]}
 {[ const mainGroups = colorTokensTree.subgroups /]}
 {[ for mainGroup in mainGroups ]}
@@ -24,6 +25,9 @@ class AppColors {
   static const {{ mainGroup.name.camelcased(true) }}Colors {{ groupName }} = {{ mainGroup.name.camelcased(true) }}Colors._();
   {[ elseif (groupName === "semantic") ]} {* Semantic Colors *}
   {[ set semanticColors = mainGroup.subgroups /]}
+  static const {{ mainGroup.name.camelcased(true) }}Colors {{ groupName }} = {{ mainGroup.name.camelcased(true) }}Colors._();
+  {[ elseif (groupName === "chatThemeSchema") ]} {* ChatTheme Colors *}
+  {[ set chatThemeColors = mainGroup.subgroups /]}
   static const {{ mainGroup.name.camelcased(true) }}Colors {{ groupName }} = {{ mainGroup.name.camelcased(true) }}Colors._();
   {[/]}
   {[/]}
@@ -107,5 +111,44 @@ class SemanticColor extends ColorSwatch<String> {
 
   Color get light => this['light']!;
 
-  Color? get text => this['text'];
+  Color get text => this['text'] ?? Color(0xffffffff);
 }
+
+class ChatThemeColors {
+  const ChatThemeColors._();
+
+  {[ for chatThemeColor in chatThemeColors ]}
+  final {{ chatThemeColor.name.camelcased(true) }}Colors {{ chatThemeColor.name.camelcased(false) }} = const {{ chatThemeColor.name.camelcased(true) }}Colors._();
+  {[/]}
+}
+
+{[ for chatThemeColor in chatThemeColors ]}
+
+class {{ chatThemeColor.name.camelcased(true) }}Colors {
+  const {{ chatThemeColor.name.camelcased(true) }}Colors._();
+  
+{* check is category *}
+{[ const currentColors = ds.tokensByGroupId(chatThemeColor.id) /]}
+{[ if (currentColors.count() > 0) ]}
+{[ for currentColor in currentColors ]}
+  final Color {{ currentColor.name.camelcased(false) }} = const Color({{ convertHexColor(currentColor.value) }});
+{[/]}
+{[ else ]}
+{[ if (chatThemeColor.subgroups.count() > 0) ]}
+{[ for subgroup in chatThemeColor.subgroups ]}
+  {[ const colors = ds.tokensByGroupId(subgroup.id) /]}
+  {[ const primaryColor = findInObjects(colors, "name", "Basic") /]}
+  final SemanticColor {{ subgroup.name.camelcased(false) }} = const SemanticColor(
+    {{ convertHexColor(primaryColor.value) }},
+    <String, Color>{
+      {[ for color in colors ]}
+        '{{ color.name.camelcased(false) }}': Color({{ convertHexColor(color.value) }}),
+      {[/]}
+    },
+  );
+{[/]}
+{[/]}
+{[/]}
+}
+{[/]}
+{[/]}
